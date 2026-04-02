@@ -1,0 +1,18 @@
+{
+  "name": "@pipeworx/mcp-econdata",
+  "version": "1.0.0",
+  "description": "MCP server for US economic data (unemployment, CPI, employment) via Bureau of Labor Statistics API",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "files": ["src"],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": ["mcp", "mcp-server", "model-context-protocol", "pipeworx", "econdata", "economics", "bls"],
+  "author": "Pipeworx <hello@pipeworx.io>",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
