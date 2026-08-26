@@ -1,17 +1,33 @@
-# mcp-econdata
+# @pipeworx/econdata
 
-Econdata MCP — wraps BLS (Bureau of Labor Statistics) public API v2
+US labor and price statistics from the Bureau of Labor Statistics public API v2 — inflation (CPI-U), the unemployment rate, non-farm payroll employment by industry, and any BLS series by ID.
 
-Part of [Pipeworx](https://pipeworx.io) — an MCP gateway connecting AI agents to 1394+ live data sources.
+Part of [Pipeworx](https://pipeworx.io) — an MCP gateway connecting AI agents to 1476+ live data sources.
 
 ## Tools
 
-| Tool | Description |
-|------|-------------|
-| `get_series` | Fetch any economic time series by ID (e.g., "CPUR0000SA0" for CPI, "LNS14000000" for unemployment). Returns historical data points with dates and values. |
-| `get_unemployment` | Get the US civilian unemployment rate over time (Bureau of Labor Statistics) — the percentage of the labor force currently unemployed. Use this for "unemployment rate" / "jobless rate" queries. Returns monthly values by year and month. |
-| `get_cpi` | Current US inflation rate (CPI year-over-year) and Consumer Price Index history. Returns monthly index values with computed yoy_inflation_pct per month plus a latest summary — answers "what is the latest inflation rate" directly. |
-| `get_employment_by_industry` | Get US non-farm payroll employment by industry (manufacturing, construction, retail, financial, government, etc.). Returns employment figures in thousands by period. |
+| Tool | What it returns |
+|---|---|
+| `get_cpi` | CPI-U index history for the US city average, all items, with `yoy_inflation_pct` computed per month and a `latest` summary. **Not seasonally adjusted by default** (BLS `CUUR0000SA0`); pass `seasonally_adjusted: true` for `CUSR0000SA0` — the same series FRED publishes as `CPIAUCSL`. Every response names the adjustment it used and carries the other month-matched value as `latest.index_value_sa` / `latest.index_value_nsa`, because the two run about a point apart (2026-07: 333.918 NSA vs 332.813 SA). |
+| `get_unemployment` | Civilian unemployment rate, seasonally adjusted (`LNS14000000`), monthly. |
+| `get_employment_by_industry` | All-employees payroll counts in thousands, seasonally adjusted, for `total_nonfarm`, `manufacturing`, `construction`, `retail`, `financial` or `government`. |
+| `get_series` | Any BLS series by ID, for callers who already know the series they want. |
+
+Every data point carries an ISO `date` derived from the BLS `period` code (`M01`–`M12` monthly, `Q01`–`Q04` quarterly, `S01`/`S02` semiannual, `A01`/`M13` annual), so results sort and freshness-check without decoding `"M06"`.
+
+## Auth
+
+Keyless works, at roughly **25 requests per day per IP**. A free BLS registration key raises that to 500/day: get one at <https://data.bls.gov/registrationEngine/>. The gateway supplies a platform key (`PLATFORM_BLS_KEY`); pass `_apiKey` only to override it with your own.
+
+Two BLS limits fail differently and the pack distinguishes them, because they used to read alike:
+
+- **Per-second burst** — BLS returns HTTP 429 "Requests Per Second Limit Exceeded" when concurrent callers land in the same second. The pack retries three times (400 ms, 1200 ms, 2500 ms); only a 429 that survives all three surfaces, as `upstream_throttled`, saying explicitly that this is *not* the daily quota and *not* an exhausted key.
+- **Daily threshold** — arrives as a `REQUEST_NOT_PROCESSED` body, not an HTTP error. Also surfaced as `upstream_throttled`, with the registration link.
+
+## Data sources
+
+- BLS Public Data API v2 — <https://api.bls.gov/publicAPI/v2/timeseries/data/> (docs: <https://www.bls.gov/developers/api_signature_v2.htm>)
+- Series used: `CUUR0000SA0` / `CUSR0000SA0` (CPI-U, NSA / SA), `LNS14000000` (unemployment rate), `CES*` (Current Employment Statistics by industry)
 
 ## Quick Start
 
@@ -27,7 +43,25 @@ Add to your MCP client (Claude Desktop, Cursor, Windsurf, etc.):
 }
 ```
 
-Or connect to the full Pipeworx gateway for access to all 1394+ data sources:
+### What this endpoint actually serves
+
+`tools/list` at `https://gateway.pipeworx.io/econdata/mcp` returns the tools in the table
+above **plus the shared Pipeworx meta-tools** — `ask_pipeworx`,
+`discover_tools`, `search_within`, `remember`/`recall` and the rest of the
+gateway-wide set. So the tool count you see is larger than this table: a
+single-pack endpoint currently lists roughly 30 shared tools alongside the
+pack's own. The connection's `initialize` response states its exact scope, and
+is the authoritative answer for a given day.
+
+This is deliberate, not multiplexing by accident. The meta-tools are what let a
+scoped connection answer a question this pack does not cover — via
+`ask_pipeworx`, which routes across the whole catalog — without you adding a
+second MCP server. There is currently no way to mount a pack endpoint without
+them; if the extra schemas cost you more context than the routing is worth,
+connect to the full gateway once rather than to several pack endpoints.
+
+Or connect to the full Pipeworx gateway to get every pack's tools listed
+directly, instead of just this one's:
 
 ```json
 {
@@ -39,9 +73,14 @@ Or connect to the full Pipeworx gateway for access to all 1394+ data sources:
 }
 ```
 
+Both URLs reach the same gateway and the same 1476+ data sources. The
+only difference is which pack's tools are listed **directly**; `ask_pipeworx`
+reaches all of them from either one.
+
 ## Using with ask_pipeworx
 
-Instead of calling tools directly, you can ask questions in plain English:
+Instead of calling tools directly, you can ask questions in plain English —
+this works on the pack endpoint above as well as on the full gateway:
 
 ```
 ask_pipeworx({ question: "your question about Econdata data" })
