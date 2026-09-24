@@ -2,7 +2,7 @@
 
 US labor and price statistics from the Bureau of Labor Statistics public API v2 — inflation (CPI-U), the unemployment rate, non-farm payroll employment by industry, and any BLS series by ID.
 
-Part of [Pipeworx](https://pipeworx.io) — an MCP gateway connecting AI agents to 1476+ live data sources.
+Part of [Pipeworx](https://pipeworx.io) — an MCP gateway connecting AI agents to 1679+ live data sources.
 
 ## Tools
 
@@ -12,6 +12,8 @@ Part of [Pipeworx](https://pipeworx.io) — an MCP gateway connecting AI agents 
 | `get_unemployment` | Civilian unemployment rate, seasonally adjusted (`LNS14000000`), monthly. |
 | `get_employment_by_industry` | All-employees payroll counts in thousands, seasonally adjusted, for `total_nonfarm`, `manufacturing`, `construction`, `retail`, `financial` or `government`. |
 | `get_series` | Any BLS series by ID, for callers who already know the series they want. |
+
+Data arrives **newest first** — every response says so in `observation_order`, so you don't have to infer it from the dates. `total` and `returned` are always equal here: BLS returns every point in the requested year range, so nothing is truncated.
 
 Every data point carries an ISO `date` derived from the BLS `period` code (`M01`–`M12` monthly, `Q01`–`Q04` quarterly, `S01`/`S02` semiannual, `A01`/`M13` annual), so results sort and freshness-check without decoding `"M06"`.
 
@@ -73,9 +75,45 @@ directly, instead of just this one's:
 }
 ```
 
-Both URLs reach the same gateway and the same 1476+ data sources. The
+Both URLs reach the same gateway and the same 1679+ data sources. The
 only difference is which pack's tools are listed **directly**; `ask_pipeworx`
 reaches all of them from either one.
+
+## No MCP client? Call it over HTTP
+
+```bash
+curl -X POST https://gateway.pipeworx.io/v1/tools/econdata_get_series \
+  -H 'Content-Type: application/json' \
+  -d '{"series_id":"CUUR0000SA0"}'
+```
+
+No account needed for the first calls. Inspect any tool: `GET https://gateway.pipeworx.io/v1/tools/econdata_get_series`. Find one: `POST https://gateway.pipeworx.io/v1/tools/search_packs` with `{"query":"..."}`.
+
+## Standalone (no gateway account)
+
+This package also runs as a local stdio MCP server — no Pipeworx account, no
+gateway round-trip:
+
+```json
+{
+  "mcpServers": {
+    "econdata": {
+      "command": "npx",
+      "args": ["-y", "@pipeworx/mcp-econdata"]
+    }
+  }
+}
+```
+
+Or run it directly to confirm it starts:
+
+```bash
+npx -y @pipeworx/mcp-econdata
+```
+
+It speaks MCP over stdin/stdout and answers `initialize`/`tools/list`/`tools/call`
+for **only** this pack's tools — none of the shared meta-tools the gateway
+connection above adds. Same source, same tools, no ask_pipeworx routing.
 
 ## Using with ask_pipeworx
 
@@ -96,13 +134,3 @@ The gateway picks the right tool and fills the arguments automatically.
 ## License
 
 MIT
-
-## No MCP client? Call it over HTTP
-
-```bash
-curl -X POST https://gateway.pipeworx.io/v1/tools/econdata_get_series \
-  -H 'Content-Type: application/json' \
-  -d '{"series_id":"CUUR0000SA0"}'
-```
-
-No account needed for the first calls. Inspect any tool: `GET https://gateway.pipeworx.io/v1/tools/econdata_get_series`. Find one: `POST https://gateway.pipeworx.io/v1/tools/search_packs` with `{"query":"..."}`.

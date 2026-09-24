@@ -1,18 +1,32 @@
 {
   "name": "@pipeworx/mcp-econdata",
-  "version": "1.0.0",
-  "description": "MCP server for US economic data (unemployment, CPI, employment) via Bureau of Labor Statistics API",
+  "version": "1.0.1",
+  "description": "Econdata MCP — wraps BLS (Bureau of Labor Statistics) public API v2",
+  "type": "module",
   "main": "src/index.ts",
   "types": "src/index.ts",
-  "files": ["src"],
+  "bin": {
+    "mcp-econdata": "bin/cli.js"
+  },
+  "keywords": ["mcp", "mcp-server", "model-context-protocol", "pipeworx", "econdata"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pipeworx-io/mcp-econdata.git"
+  },
   "scripts": {
-    "build": "tsc",
     "typecheck": "tsc --noEmit"
   },
-  "keywords": ["mcp", "mcp-server", "model-context-protocol", "pipeworx", "econdata", "economics", "bls"],
-  "author": "Pipeworx <hello@pipeworx.io>",
-  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "tsx": "^4.19.0"
+  },
   "devDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.9.3",
+    "@cloudflare/workers-types": "^4.20260405.1"
+  },
+  "pipeworx": {
+    "sourceHash": "v1-36e012f7dc69ffb99366c377501c4b3a2ae1a5aee7a1730d2bf2c54ee985556e",
+    "sourceCommit": "76aa8f5d9b5dc2f665563030647c68e661478864"
   }
 }

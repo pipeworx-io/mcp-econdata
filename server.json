@@ -1,0 +1,18 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.pipeworx-io/econdata",
+  "title": "Econdata",
+  "description": "Econdata MCP — wraps BLS (Bureau of Labor Statistics) public API v2",
+  "version": "1.0.1",
+  "websiteUrl": "https://pipeworx.io/packs/econdata",
+  "repository": {
+    "url": "https://github.com/pipeworx-io/mcp-econdata",
+    "source": "github"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://gateway.pipeworx.io/econdata/mcp"
+    }
+  ]
+}
