@@ -2,7 +2,7 @@
 
 US labor and price statistics from the Bureau of Labor Statistics public API v2 — inflation (CPI-U), the unemployment rate, non-farm payroll employment by industry, and any BLS series by ID.
 
-Part of [Pipeworx](https://pipeworx.io) — an MCP gateway connecting AI agents to 1679+ live data sources.
+Part of [Pipeworx](https://pipeworx.io) — an MCP gateway connecting AI agents to 1683+ live data sources.
 
 ## Tools
 
@@ -75,7 +75,7 @@ directly, instead of just this one's:
 }
 ```
 
-Both URLs reach the same gateway and the same 1679+ data sources. The
+Both URLs reach the same gateway and the same 1683+ data sources. The
 only difference is which pack's tools are listed **directly**; `ask_pipeworx`
 reaches all of them from either one.
 
