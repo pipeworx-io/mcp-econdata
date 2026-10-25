@@ -1,6 +1,6 @@
 {
   "name": "@pipeworx/mcp-econdata",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Econdata MCP — wraps BLS (Bureau of Labor Statistics) public API v2 (https://api.bls.gov/publicAPI/v2/)",
   "type": "module",
   "main": "src/index.ts",
@@ -26,7 +26,7 @@
     "@cloudflare/workers-types": "^4.20260405.1"
   },
   "pipeworx": {
-    "sourceHash": "v1-b123dbd1774d491490c860522b85fde8006a73d564a1342e5f30df87b709e128",
-    "sourceCommit": "5749f83c0ea115fab4c0c0ef04b66b05f2507d67"
+    "sourceHash": "v1-7c5c7f82fb5f23562435205cbdbe486a4217bf1263648eb6e1e3cfe199c90159",
+    "sourceCommit": "29fb434ca65fe0f61191f19c3502f583f5fb99d7"
   }
 }

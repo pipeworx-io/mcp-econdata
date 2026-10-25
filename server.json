@@ -3,7 +3,7 @@
   "name": "io.github.pipeworx-io/econdata",
   "title": "Econdata",
   "description": "Econdata MCP — wraps BLS (Bureau of Labor Statistics) public API v2…",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "websiteUrl": "https://pipeworx.io/packs/econdata",
   "repository": {
     "url": "https://github.com/pipeworx-io/mcp-econdata",
