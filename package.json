@@ -1,12 +1,20 @@
 {
   "name": "@pipeworx/mcp-econdata",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Econdata MCP — wraps BLS (Bureau of Labor Statistics) public API v2 (https://api.bls.gov/publicAPI/v2/)",
   "type": "module",
-  "main": "src/index.ts",
-  "types": "src/index.ts",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./tools.json": "./tools.json",
+    "./package.json": "./package.json"
+  },
   "bin": {
     "mcp-econdata": "bin/cli.js"
+  },
+  "files": ["bin/", "lib/", "tools.json", "server.json"],
+  "engines": {
+    "node": ">=18"
   },
   "keywords": ["mcp", "mcp-server", "model-context-protocol", "pipeworx", "econdata"],
   "license": "MIT",
@@ -14,19 +22,12 @@
     "type": "git",
     "url": "git+https://github.com/pipeworx-io/mcp-econdata.git"
   },
-  "scripts": {
-    "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.30.0",
-    "tsx": "^4.19.0"
-  },
-  "devDependencies": {
-    "typescript": "^5.9.3",
-    "@cloudflare/workers-types": "^4.20260405.1"
-  },
+  "mcpName": "io.github.pipeworx-io/econdata",
   "pipeworx": {
-    "sourceHash": "v1-7c5c7f82fb5f23562435205cbdbe486a4217bf1263648eb6e1e3cfe199c90159",
-    "sourceCommit": "29fb434ca65fe0f61191f19c3502f583f5fb99d7"
+    "mode": "gateway",
+    "slug": "econdata",
+    "gatewaySlug": "econdata",
+    "sourceHash": "v1-1c29b22923d563273eab51cb65a779b886c99b8f5d196426178ff391f942949e",
+    "sourceCommit": "bb047243cf27f32453103de186b8e6a8b6a1ce79"
   }
 }
